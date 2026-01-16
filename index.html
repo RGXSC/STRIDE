@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STRIDE - Self Asssement Tool for Readiness, Insight, Development & Excellence </title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --lvmh-navy: #1a2332;
+            --lvmh-dark-blue: #2c3e50;
+            --lvmh-gold: #c9a961;
+            --lvmh-light-gold: #d4af6a;
+            --lvmh-silver: #e8e8e8;
+            --lvmh-white: #ffffff;
+            --lvmh-accent: #8b7355;
+            --lvmh-gray: #6c7a89;
+            --lvmh-light-gray: #f5f6fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--lvmh-navy) 0%, var(--lvmh-dark-blue) 100%);
+            color: var(--lvmh-navy);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: var(--lvmh-white);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--lvmh-navy) 0%, #243447 100%);
+            color: var(--lvmh-white);
+            padding: 40px 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" fill="%23c9a961" opacity="0.1"/></svg>');
+            opacity: 0.1;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .logo {
+            width: 200px;
+            height: auto;
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+        }
+
+        .header-text h1 {
+            font-size: 2.8em;
+            font-weight: 300;
+            letter-spacing: 8px;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, var(--lvmh-white) 0%, var(--lvmh-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-text p {
+            font-size: 1.1em;
+            color: var(--lvmh-silver);
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .export-btn {
+            background: linear-gradient(135deg, var(--lvmh-gold) 0%, var(--lvmh-accent) 100%);
+            color: var(--lvmh-white);
+            border: none;
+            padding: 15px 35px;
+            font-size: 1em;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(201, 169, 97, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(201, 169, 97, 0.5);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 0;
+        }
+
+        .assessment-panel {
+            padding: 50px;
+            background: var(--lvmh-white);
+        }
+
+        .dashboard-panel {
+            background: linear-gradient(180deg, var(--lvmh-light-gray) 0%, var(--lvmh-silver) 100%);
+            padding: 50px 40px;
+            border-left: 3px solid var(--lvmh-gold);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .category-section {
+            margin-bottom: 50px;
+            animation: fadeIn 0.6s ease;
+            page-break-inside: avoid;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .category-header {
+            background: linear-gradient(135deg, var(--lvmh-navy) 0%, var(--lvmh-dark-blue) 100%);
+            color: var(--lvmh-white);
+            padding: 20px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-header::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            background: var(--lvmh-gold);
+        }
+
+        .category-header h2 {
+            font-size: 1.6em;
+            font-weight: 400;
+            letter-spacing: 2px;
+        }
+
+        .topic-item {
+            background: var(--lvmh-white);
+            border: 2px solid var(--lvmh-silver);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+            page-break-inside: avoid;
+        }
+
+        .topic-item:hover {
+            border-color: var(--lvmh-gold);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            transform: translateX(5px);
+        }
+
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .topic-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: var(--lvmh-navy);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .topic-badge {
+            display: inline-block;
+            background: var(--lvmh-gold);
+            color: var(--lvmh-white);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.7em;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .maturity-levels {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .level-btn {
+            background: var(--lvmh-light-gray);
+            border: 2px solid var(--lvmh-silver);
+            border-radius: 10px;
+            padding: 20px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .level-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .level-btn:hover::before {
+            left: 100%;
+        }
+
+        .level-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .level-btn.level-1 { border-color: #e74c3c; }
+        .level-btn.level-2 { border-color: #f39c12; }
+        .level-btn.level-3 { border-color: #3498db; }
+        .level-btn.level-4 { border-color: var(--lvmh-gold); }
+
+        .level-btn.active {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .level-btn.level-1.active { 
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); 
+            color: white;
+            border-color: #c0392b;
+        }
+        .level-btn.level-2.active { 
+            background: linear-gradient(135deg, #f39c12 0%, #d68910 100%); 
+            color: white;
+            border-color: #d68910;
+        }
+        .level-btn.level-3.active { 
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); 
+            color: white;
+            border-color: #2980b9;
+        }
+        .level-btn.level-4.active { 
+            background: linear-gradient(135deg, var(--lvmh-gold) 0%, var(--lvmh-accent) 100%); 
+            color: white;
+            border-color: var(--lvmh-accent);
+        }
+
+        .level-number {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .level-name {
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .level-description {
+            font-size: 0.85em;
+            color: var(--lvmh-gray);
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--lvmh-silver);
+            min-height: 60px;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .dashboard-header h3 {
+            font-size: 1.8em;
+            color: var(--lvmh-navy);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .overall-score {
+            background: linear-gradient(135deg, var(--lvmh-navy) 0%, var(--lvmh-dark-blue) 100%);
+            color: var(--lvmh-white);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .score-value {
+            font-size: 4em;
+            font-weight: 300;
+            margin: 10px 0;
+            background: linear-gradient(90deg, var(--lvmh-white) 0%, var(--lvmh-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .score-label {
+            font-size: 0.9em;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--lvmh-silver);
+        }
+
+        .category-stats {
+            margin-top: 30px;
+        }
+
+        .stat-item {
+            margin-bottom: 25px;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .stat-name {
+            font-weight: 600;
+            color: var(--lvmh-navy);
+        }
+
+        .stat-value {
+            font-weight: 700;
+            color: var(--lvmh-gold);
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: var(--lvmh-white);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--lvmh-gold) 0%, var(--lvmh-accent) 100%);
+            border-radius: 10px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            to { left: 100%; }
+        }
+
+        .legend {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid var(--lvmh-silver);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85em;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 5px;
+        }
+
+        .completion-badge {
+            display: inline-block;
+            background: var(--lvmh-gold);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-left: 15px;
+        }
+
+        /* PDF Specific Styles */
+        @media print, .pdf-export {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-panel {
+                position: static;
+                height: auto;
+                border-left: none;
+                border-top: 3px solid var(--lvmh-gold);
+                page-break-before: always;
+            }
+
+            .export-btn {
+                display: none !important;
+            }
+
+            .topic-item:hover {
+                transform: none;
+            }
+
+            .level-btn:hover {
+                transform: none;
+            }
+
+            header {
+                page-break-after: avoid;
+            }
+
+            .category-section {
+                page-break-inside: avoid;
+            }
+        }
+
+        /* PDF Report Styles */
+        .pdf-report {
+            width: 210mm;
+            background: white;
+            margin: 0 auto;
+        }
+
+        .pdf-report header {
+            padding: 30px 40px;
+        }
+
+        .pdf-report .header-text h1 {
+            font-size: 2em;
+        }
+
+        .pdf-report .assessment-panel {
+            padding: 30px 40px;
+        }
+
+        .pdf-report .dashboard-panel {
+            padding: 30px 40px;
+        }
+
+        .pdf-report .category-header {
+            padding: 15px 20px;
+        }
+
+        .pdf-report .category-header h2 {
+            font-size: 1.3em;
+        }
+
+        .pdf-report .topic-item {
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .pdf-report .topic-title {
+            font-size: 1.1em;
+        }
+
+        .pdf-report .maturity-levels {
+            gap: 10px;
+        }
+
+        .pdf-report .level-btn {
+            padding: 15px 10px;
+        }
+
+        .pdf-report .level-number {
+            font-size: 1.5em;
+        }
+
+        .pdf-report .level-name {
+            font-size: 0.75em;
+        }
+
+        .pdf-report .level-description {
+            font-size: 0.8em;
+            min-height: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="mainContainer">
+        <header>
+            <div class="header-content">
+                <div class="logo-section">
+                 <img src="C:\Users\giso\OneDrive - LVMH\Documents\Grille self assessment\stride_logo.png" alt="STRIDE Logo" class="logo" id="strideLogo">
+                    <div class="header-text">
+                        <h1>STRIDE</h1>
+                        <p>Self Asssement Tool for Readiness, Insight, Development & Excellence</p>
+                    </div>
+                </div>
+                <button class="export-btn" onclick="exportToPDF()">
+                    📄 Export PDF Report
+                </button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="assessment-panel" id="assessmentPanel">
+                <!-- Categories will be dynamically generated here -->
+            </div>
+
+            <div class="dashboard-panel">
+                <div class="dashboard-header">
+                    <h3>Assessment Dashboard</h3>
+                </div>
+
+                <div class="overall-score">
+                    <div class="score-label">Overall Maturity</div>
+                    <div class="score-value" id="overallScore">0.0</div>
+                    <div class="score-label" id="overallLevel">Not Started</div>
+                </div>
+
+                <div class="category-stats" id="categoryStats">
+                    <!-- Stats will be dynamically generated here -->
+                </div>
+
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #e74c3c;"></div>
+                        <span>⭐ Starting</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f39c12;"></div>
+                        <span>⭐⭐ Growing</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #3498db;"></div>
+                        <span>⭐⭐⭐ Mastering</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: var(--lvmh-gold);"></div>
+                        <span>⭐⭐⭐⭐ Leading</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Assessment Data Structure from Excel
+const assessmentData = {
+    "SUPPLY CHAIN / PLANNING": [
+        {
+            name: "S&OP Governance & Strategy",
+            levels: [
+                "Does your organization have a regular meeting where sales, operations, and finance review demand vs. supply gaps?",
+                "Does General Management review and approve the S&OP consensus demand plan at least monthly, with documented decisions (budget adjustments, capacity investments)?",
+                "When actual demand deviates significantly from plan, can your S&OP governance trigger re-planning and resource reallocation within 2 weeks?",
+                "Does your S&OP enable what-if scenario planning across multiple time horizons (weekly/monthly/quarterly), with at least 3 documented strategic decisions made using these scenarios in the past 6 months?"
+            ]
+        },
+        {
+            name: "Demand Forecasting",
+            levels: [
+                "Do you produce a SKU-level forecast beyond your annual budget that is updated at least quarterly?",
+                "Do you track forecast accuracy KPIs (e.g., MAPE, bias) monthly with designated team accountability?",
+                "Does your demand forecasting incorporate at least 2 data signals (POS, market trends, sales/market input) using a collaborative platform, with differentiated update frequencies by product category?",
+                "Do you use advanced analytics (statistical models, ML, external data) for forecasting, with documented reduction in stockouts OR excess inventory by at least 10% over the past 2 years?"
+            ]
+        },
+        {
+            name: "Production & Capacity Planning",
+            levels: [
+                "Do you have a production plan (weekly or monthly volumes) AND documented available capacity by production unit?",
+                "Do you update your production plan at least weekly, with a formal process ensuring demand-capacity alignment and a designated meeting chair?",
+                "Can you reallocate capacity or adjust production schedules within 48 hours when demand spikes, using dedicated tools (APS/scheduling software) and track both plan adherence AND flexibility KPIs?",
+                "Have you implemented flexible capacity mechanisms (multi-skilled workers, modular cells, supplier partnerships) that respond within 48-72 hours, with documented improvement in service level OR stock reduction by at least 10% over the past 12 months?"
+            ]
+        },
+        {
+            name: "Procurement Planning",
+            levels: [
+                "Do you share a rolling procurement plan with your key suppliers (even if informal), covering at least the next 3-6 months?",
+                "Do you track lead times for critical materials AND have documented risk management procedures (dual sourcing, safety stock, crisis protocols), with supplier performance reviews every 6 months?",
+                "Does procurement planning dynamically adjust order quantities based on demand signals and production schedules, with regular cross-functional meetings (procurement, supply planning, quality) at least monthly?",
+                "Have you co-developed with suppliers to achieve shorter lead times OR smaller MOQs OR postponement strategies, with documented inventory reduction OR availability improvement of at least 10% over the past 12 months?"
+            ]
+        },
+        {
+            name: "Inventory Management",
+            levels: [
+                "Do you have daily visibility of your inventory levels by SKU and location (including in-transit stock)?",
+                "Do you track at least 2 inventory KPIs (turnover, DOI, weeks of supply) by product category with designated ownership and at least monthly reviews?",
+                "Does your inventory strategy differentiate by product type (permanent/seasonal/novelties) with automatic replenishment responding to demand signals, and are inventory parameters revised at least monthly?",
+                "Have you shifted inventory mix to hold at least 30% in raw materials/WIP (vs. finished goods) AND documented reduction in write-offs/markdowns OR improvement in availability by at least 15% over the past 12 months, using scenario analysis?"
+            ]
+        },
+        {
+            name: "Distribution Planning",
+            levels: [
+                "Do you manage distribution based on actual client orders only, or do you also create a forward-looking distribution plan based on forecasted demand?",
+                "Does a formal process ensure distribution plan alignment with production and regional forecasts, updated at least weekly, with a designated decision-maker for allocation during scarcity?",
+                "Can you re-plan distribution within 48 hours when demand patterns shift, using tools that enable automatic store/DC replenishment based on real-time sales data?",
+                "Does your distribution strategy differentiate by product type with pull-based replenishment, documented improvement in sell-through OR reduction in end-of-life stock by at least 15% over the past 12 months, AND multi-modal transport flexibility?"
+            ]
+        }
+    ],
+    "PRODUCTION": [
+        {
+            name: "Performance Measurement",
+            levels: [
+                "Are fundamental KPIs measured (% accidents, schedule adherence, absenteeism, % quality, delays/advances)?",
+                "Do you measure operational KPIs at least weekly with designated responsibility for tracking?",
+                "Are cross-functional KPIs measured and tracked (% client service, right first time, actual product cost, absorption by sector, OEE/TRS, Takt Time/Cycle Time)?",
+                "Have your production performance KPIs demonstrated measurable improvement (reduced lead times, increased quality, reduced costs) over the past 12 months, with results shared in real-time with teams through visual management?"
+            ]
+        },
+        {
+            name: "Agility & Flexibility",
+            levels: [
+                "Do you know your capacity flexibility, planning frequency, production lead-time, AND have documented capacity tunnels and bottlenecks?",
+                "Do you have a visible and updated polyvalence matrix, produce at least 20 active SKUs per month, AND track average changeover time?",
+                "Can you reallocate capacity within 48 hours when demand spikes for a bestseller, AND do you have a formal process to challenge lead-times and MOQs at least quarterly?",
+                "Have you implemented modular cells or multi-skilled teams that can produce all product types and respond within 48-72 hours, with documented improvement in service rate OR stock reduction by at least 10% over the past 12 months?"
+            ]
+        },
+        {
+            name: "Management & Routines",
+            levels: [
+                "Do production routines exist? Can I see where, on what medium (board, digital tool)?",
+                "Does production have a formal shopfloor information escalation process with at least daily production meetings and weekly planning meetings with designated participants?",
+                "Do you have documented processes for handling blocking points, track bottlenecks, anticipate problems, AND conduct Asaichi or QRQC rituals at least weekly?",
+                "Do you have cascading production routines (daily/weekly/monthly) that enable same-day problem resolution, with at least 3 documented examples in the past 3 months?"
+            ]
+        },
+        {
+            name: "Quality & Problem Solving",
+            levels: [
+                "Do you have a formal problem-solving process? Do you know your costs of non-quality?",
+                "Do you have a documented quality escalation process with designated responsibility for tracking corrective actions AND defined quality objectives (regional or local)?",
+                "Do you use at least 2 structured problem-solving methods (5 Whys, Ishikawa, QRQC, Asaichi), with documented decrease in costs of non-quality over the past 12 months?",
+                "Has your problem-solving culture reduced costs of non-quality by at least 10% over the past 12 months, with at least 30% of artisans/operators trained and active in problem solving?"
+            ]
+        },
+        {
+            name: "Industrialization & New Product Management",
+            levels: [
+                "Are prototypes and pre-series identified on lines? Are there resources allocated to novelty (methods, support)? Do you know novelty flows? Are BOMs (nomenclatures) accurate?",
+                "Do you have pilot lines or prototyping workshops, a designated person managing the Development-Production interface, AND a formal BOM accuracy validation process before production?",
+                "Can you measure and anticipate the impact of new products on production lines (capacity, skills, tooling), AND do you have a formal training process for new know-how?",
+                "Have you launched new products without disrupting series production in the past 6 months, with at least 3 successful launches meeting both schedule and quality targets?"
+            ]
+        },
+        {
+            name: "Production Equipment / Machines",
+            levels: [
+                "Is there machine classification? Is there an autonomous and planned maintenance plan?",
+                "Do you track machine breakdowns (frequency and downtime duration) with production impact analysis, AND have designated responsibility for maintenance?",
+                "Do you have active breakdown/downtime reduction initiatives, AND track OEE/TRS for critical equipment with a target of at least 75%?",
+                "Has your predictive maintenance strategy increased OEE/TRS by at least 10% over the past 12 months, enabling you to respond to demand spikes without additional capacity investment?"
+            ]
+        }
+    ],
+    "LOGISTICS": [
+        {
+            name: "Lead Time E2E & Agility",
+            levels: [
+                "Do you know your end-to-end lead times from supplier to client by product category and destination?",
+                "Do you track average lead times by flow type (raw materials, WIP, finished goods, distribution) AND document delays with root cause analysis?",
+                "Can you re-route flows or expedite shipments within 48 hours when disruptions occur, AND do you measure the percentage of lead time that is value-add vs. wait time?",
+                "Have you reduced E2E lead times by at least 10% over the past 12 months through flow optimization, while maintaining or improving cost and sustainability metrics, with documented adaptation to evolving constraints?"
+            ]
+        },
+        {
+            name: "Network Strategy & Footprint",
+            levels: [
+                "Do you have a clear understanding of your logistics network (production sites, DCs, cross-docks, stores) and the flows between nodes?",
+                "Do you review your network design every 3 years, with documented triggers for optimization analysis (new market, volume change, cost pressure)?",
+                "Do you use network optimization tools to test at least 3 scenario types (demand shifts, new channels, nearshoring, sustainability), with documented multi-criteria decision framework (proximity, scale, risk)?",
+                "Has network redesign in the past 24 months improved service levels OR reduced costs by at least 10%, with documented mastered segregation of building, systems, automation, and operations?"
+            ]
+        },
+        {
+            name: "3PL & Transport Management",
+            levels: [
+                "Do you manage transportation based on transactional relationships with many fragmented suppliers (opportunistic spot buying)?",
+                "Do you have a consolidated 3PL partner base (fewer than 10 per region/mode) AND track at least 3 performance KPIs (on-time delivery, cost, quality, sustainability)?",
+                "Do you have long-term partnerships (3+ years) with strategic 3PLs that include collaboration beyond operations (CSR, new services, geographic expansion) with incentive-aligned contracts (gain-sharing or SLA-based)?",
+                "Have strategic 3PL partnerships co-developed at least 2 innovations or service enhancements in the past 12 months that delivered measurable value to both parties?"
+            ]
+        },
+        {
+            name: "Performance Management / KPI / Data",
+            levels: [
+                "Do you have isolated scorecards for logistics (warehouse productivity, transport cost) managed within the logistics function only?",
+                "Do you track at least 4 logistics KPIs across the value chain (order-to-delivery time, cost-to-serve, inventory turns, transport fill rates) with at least monthly cross-functional reviews?",
+                "Do you have real-time data visibility with dashboards/BI tools providing multilevel visibility (site, regional, global) and automated exception alerts?",
+                "Has scorecard automation and real-time visibility reduced costs OR improved service levels by at least 10% over the past 12 months, using predictive analytics or AI tools?"
+            ]
+        },
+        {
+            name: "Customs & Regulatory / FTA & Tax",
+            levels: [
+                "Does master data exist for customs (HS codes, country of origin), but with no dedicated resources or trade compliance team?",
+                "Do you have a dedicated trade compliance team managing customs, regulatory requirements, and FTA programs, with at least 30% of eligible shipments leveraging FTA benefits?",
+                "Does your trade compliance function proactively monitor regulatory changes with impact assessments, AND have processes ensuring data accuracy (HS codes, certificates) with audit readiness?",
+                "Have you reduced duty costs by at least 10% through FTA leverage in the past 12 months, with at least 80% of products compliant with evolving regulations (CSRD, conflict minerals, sustainability)?"
+            ]
+        }
+    ],
+    "DIRECT PROCUREMENT": [
+        {
+            name: "Sourcing Strategy & Supplier Portfolio",
+            levels: [
+                "Do you have a clear mapping of supplier know-how and expertise by material category/region?",
+                "Do you have a documented sourcing strategy for each category (dual sourcing, strategic vs. tactical) with supplier count per category tracked?",
+                "Does your sourcing strategy formally balance at least 4 criteria (risk, cost, quality, sustainability) with documented supplier segmentation (strategic, preferred, approved) and differentiated management?",
+                "Has supplier portfolio optimization reduced supply risk incidents OR improved quality by at least 10% over the past 12 months, with at least 2 documented examples supporting sustainability goals?"
+            ]
+        },
+        {
+            name: "Supplier Performance & Relationship Management",
+            levels: [
+                "How do you decide which suppliers to keep or change?",
+                "Do you use supplier scorecards AND conduct business reviews with strategic suppliers at least quarterly?",
+                "Does your supplier performance data automatically trigger corrective action plans in your SRM system, AND do you track multi-dimensional KPIs (responsiveness, innovation, sustainability)?",
+                "Have you documented at least 2 co-development cases with suppliers in the past 12 months that resulted in measurable cost, quality, or sustainability improvements shared by both parties?"
+            ]
+        },
+        {
+            name: "Traceability & Due Diligence",
+            levels: [
+                "Do you know the origin of your raw materials (country, supplier tier-1)?",
+                "Can you trace materials back to tier-2 suppliers for critical categories, AND do you have documented due diligence procedures?",
+                "Does your traceability system enable rapid response to quality or compliance issues, AND is at least 60% of spend covered by due diligence audits (social, environmental, ethical)?",
+                "Have you achieved end-to-end traceability (to source/farm/mine) enabling sustainability certification or regulatory compliance, with at least 50% of materials certified (organic, fair trade, conflict-free)?"
+            ]
+        },
+        {
+            name: "Sustainability & Impact Management",
+            levels: [
+                "Do you measure the environmental impact of your sourcing (CO2, water, waste)?",
+                "Do you track supplier sustainability performance AND have an action plan with reduction trajectory?",
+                "Does sustainability performance influence sourcing decisions (supplier selection, contract terms), AND is at least 40% of spend with suppliers meeting defined sustainability criteria?",
+                "Have sustainable sourcing initiatives reduced environmental impact (CO2, water, waste) by at least 10% over the past 12 months while maintaining or improving cost and quality, with documented supplier-contributed innovations?"
+            ]
+        },
+        {
+            name: "Procurement Processes & Systems",
+            levels: [
+                "Do you have documented procurement processes (RFQ, contract management, PO-to-pay)?",
+                "Are procurement processes digitized in a system (ERP, e-procurement platform), AND is at least 70% of spend managed through the system?",
+                "Do your procurement systems enable spend visibility, contract compliance, and automated workflows (approvals, PO matching), AND do you use analytics to identify savings opportunities or risks?",
+                "Has procurement digital transformation reduced procurement cycle time by at least 10%, increased contract compliance by at least 20%, OR identified savings of at least 10% over the past 12 months?"
+            ]
+        }
+    ],
+    "SUSTAINABILITY": [
+        {
+            name: "Sustainable Production - Process & Impact",
+            levels: [
+                "Do you know and regularly track your environmental impacts and resource consumption (energy, water, waste)?",
+                "Have you implemented actions to reduce the environmental impact of your production, with tracked sell-through and destruction KPIs and a resource optimization/waste reduction action plan?",
+                "Does your monitoring process provide precise visibility on waste management and energy consumption reduction, with regular tracking of KPIs such as water consumption/kg product, zero waste objectives, and use of hazardous substances (ZDHC)?",
+                "Is your production aligned with LIFE 360 creative circularity objectives, with a measurable percentage of recycled or upcycled materials in products?"
+            ]
+        },
+        {
+            name: "Sustainable Sourcing - Raw Materials Strategy",
+            levels: [
+                "Do you know your critical supply chains (number and geographic origin by supply chain)?",
+                "Are sourced raw materials certified via Group-recommended standards (>70% of materials certified on recognized standards), with knowledge of country of origin and documented sustainable sourcing principles (RM charter)?",
+                "Are raw materials traced with a Chain of Custody (CoC) traceability tool, dedicated supplier mapping, and defined supplier tier coverage (which tier)?",
+                "Have you defined an impact reduction action plan with your suppliers for traced and certified materials with calculated environmental impact (CO2, water, etc.) using eco-score tools, through collaboration between Procurement, Environment, and Operations?"
+            ]
+        },
+        {
+            name: "Sustainable Subcontractors & Direct Suppliers - Compliance",
+            levels: [
+                "Do you have a mapping of your value chains (from tier 1 to tier N)?",
+                "Do you have due diligence processes when onboarding new subcontractors with Code of Conduct signature (100% with Dun's and tier-2 list declared by tier-1, 100% CoC signed for strategic suppliers, due diligence including capacity checks)?",
+                "Do you implement social and environmental audits of your suppliers and operational visits (WIP capacity verification), with 100% of direct suppliers traced to tier N and 100% of subcontractors visited and audited using supplier portals connected to audit tools?",
+                "Do you implement corrective action plans for non-compliance cases (95% of subcontractors engaged in corrective action plans and 100% CoC signed), with KPI tracking such as equity participation percentage and/or guaranteed capacity percentage?"
+            ]
+        },
+        {
+            name: "Sustainable Logistics - Operations & Transport",
+            levels: [
+                "Do you know your carbon footprint weight on transport (upstream and downstream logistics CO2 tonnage)?",
+                "Do you have a plan or initiatives to reduce your logistics carbon footprint (tracking carbon emissions, seeking lower-carbon transport solutions such as modal shift and route optimization) without formalized or measured objectives?",
+                "Do you track the action plan and meet your objectives with a carbon transition plan including regular quantified emission reduction tracking and use of renewable energies for logistics sites?",
+                "Is your trajectory aligned with LIFE 360, with Scope 3 impact tracking?"
+            ]
+        },
+        {
+            name: "Sustainable Innovation - Resilience & Eco-Design",
+            levels: [
+                "Do you consider sustainability criteria when developing new products or processes, with R&D/Development teams sensitized to sustainability issues?",
+                "Do you integrate sustainability objectives (eco-design, circularity) into your innovation projects, with specifications including environmental and social criteria?",
+                "Do you measure the sustainable impact of your innovations (analysis of environmental and social gains generated by innovations, such as CO2 reduction)?",
+                "Is your innovation strategy focused on long-term value creation and actively contributing to LIFE 360 objectives through creative circularity projects?"
+            ]
+        },
+        {
+            name: "Health & Safety",
+            levels: [
+                "Does a health and safety at work policy exist (for us and our third parties), with official documentation presenting H&S policy meeting minimum legal requirements?",
+                "Are procedures in place to identify and manage risks and communicated (professional risk assessment, prevention plans, emergency procedures, and awareness campaigns)?",
+                "Is there tracking of accidents/incidents with corrective and preventive action plans (accident/incident tracking, root cause analysis, action plans, ISO 45001 certification)?",
+                "Does your process actively contribute to a zero-accident culture and LVMH Group H&S initiatives, with achievement of industry-best accident frequency and severity rates, employee engagement, and proactive participation in Group H&S programs (e.g., Work at Heat for Moët Hennessy)?"
+            ]
+        }
+    ],
+    "PRODUCT DEVELOPMENT": [
+        {
+            name: "Project Management",
+            levels: [
+                "Does a minimal methodology or framework exist for managing development projects (even if informal)?",
+                "Are development projects systematically planned with clear objectives, timelines, and responsibilities, taking into account specific cycles (seasonal collections, permanent launches, limited editions)?",
+                "Are project tracking tools (Gantt charts, reporting, performance indicators, Critical chain management) used regularly and shared across teams?",
+                "Are post-project reviews and lessons learned systematically conducted and integrated to improve future processes and capitalize on creative and technical know-how?"
+            ]
+        },
+        {
+            name: "Costing",
+            levels: [
+                "Does a cost calculation process exist for new developments, even if basic or informal?",
+                "Are development costs systematically estimated and documented before project launch, distinguishing between product typologies (novelties, variants, permanent lines)?",
+                "Are cost estimates regularly compared with actual costs and adjusted for subsequent projects?",
+                "Do cost analyses integrate optimization and continuous improvement criteria, with internal or external benchmarks? Do you use value analysis and target costing?"
+            ]
+        },
+        {
+            name: "Quality",
+            levels: [
+                "Are quality criteria defined for developments, reflecting the excellence standards expected from the Maison?",
+                "Are quality controls systematically performed at different stages of development?",
+                "Are non-conformities tracked, analyzed, and are corrective actions implemented in a structured (for ex. AMDEC) manner?",
+                "Is a continuous quality improvement system in place, with indicators and shared objectives across creative, technical, and industrial teams?"
+            ]
+        },
+        {
+            name: "Make or Buy",
+            levels: [
+                "Are make or buy decisions made, even if ad hoc or informal? Do you have a cartography of 'know-how' internal and for suppliers?",
+                "Are there defined criteria to guide make or buy decisions during development, particularly to protect strategic know-how and the Maison's identity?",
+                "Are make or buy decisions documented, tracked, shared with industrial SC, and evaluated retrospectively?",
+                "Is a strategic make or buy analysis systematically integrated into development project management, with regular reviews and vigilance on preserving key competencies?"
+            ]
+        },
+        {
+            name: "Data Management",
+            levels: [
+                "Are development-related data (files, specs, history) retained, even if informally or in an unstructured manner?",
+                "Does a data management and sharing system exist to ensure traceability of development information and shared access across teams (Design, R&D, Industrialization)?",
+                "Are data structured, accessible, and used to manage projects and make decisions?",
+                "Are data analyzed proactively to anticipate needs, optimize processes, and foster innovation?"
+            ]
+        }
+    ]
+};
+
+
+        // State management
+        let assessmentState = {};
+        let categoryScores = {};
+
+        // Initialize assessment
+        function initializeAssessment() {
+            const assessmentPanel = document.getElementById('assessmentPanel');
+            
+            Object.keys(assessmentData).forEach(category => {
+                const categorySection = document.createElement('div');
+                categorySection.className = 'category-section';
+                categorySection.id = `category-${category.replace(/[^a-z0-9]/gi, '-')}`;
+                
+                const categoryHeader = document.createElement('div');
+                categoryHeader.className = 'category-header';
+                categoryHeader.innerHTML = `<h2>${category}</h2>`;
+                categorySection.appendChild(categoryHeader);
+                
+                assessmentData[category].forEach((topic, topicIndex) => {
+                    const topicId = `${category}-${topicIndex}`;
+                    assessmentState[topicId] = null;
+                    
+                    const topicItem = document.createElement('div');
+                    topicItem.className = 'topic-item';
+                    
+                    const topicHeader = document.createElement('div');
+                    topicHeader.className = 'topic-header';
+                    
+                    const topicTitle = document.createElement('div');
+                    topicTitle.className = 'topic-title';
+                    topicTitle.innerHTML = `
+                        ${topic.name}
+                        <span class="topic-badge">${category.split('/')[0].trim()}</span>
+                    `;
+                    topicHeader.appendChild(topicTitle);
+                    topicItem.appendChild(topicHeader);
+                    
+                    const maturityLevels = document.createElement('div');
+                    maturityLevels.className = 'maturity-levels';
+                    
+                    const levelNames = ['⭐ Starting', '⭐⭐ Growing', '⭐⭐⭐ Mastering', '⭐⭐⭐⭐ Leading'];
+                    
+                    topic.levels.forEach((description, levelIndex) => {
+                        const level = levelIndex + 1;
+                        const levelBtn = document.createElement('div');
+                        levelBtn.className = `level-btn level-${level}`;
+                        levelBtn.setAttribute('data-description', description);
+                        levelBtn.innerHTML = `
+                            <div class="level-number">${level}</div>
+                            <div class="level-name">${levelNames[levelIndex]}</div>
+                        `;
+                        levelBtn.onclick = () => selectLevel(topicId, level, category, levelBtn);
+                        maturityLevels.appendChild(levelBtn);
+                    });
+                    
+                    topicItem.appendChild(maturityLevels);
+                    
+                    const levelDescription = document.createElement('div');
+                    levelDescription.className = 'level-description';
+                    levelDescription.id = `desc-${topicId}`;
+                    levelDescription.innerHTML = '<em>Select a maturity level to see description</em>';
+                    topicItem.appendChild(levelDescription);
+                    
+                    categorySection.appendChild(topicItem);
+                });
+                
+                assessmentPanel.appendChild(categorySection);
+                categoryScores[category] = { total: 0, count: assessmentData[category].length };
+            });
+            
+            updateDashboard();
+        }
+
+        function selectLevel(topicId, level, category, clickedBtn) {
+            // Update state
+            const previousLevel = assessmentState[topicId];
+            assessmentState[topicId] = level;
+            
+            // Update UI
+            const topicElement = clickedBtn.closest('.topic-item');
+            const buttons = topicElement.querySelectorAll('.level-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            clickedBtn.classList.add('active');
+            
+            // Update description
+            const description = clickedBtn.getAttribute('data-description');
+            const descElement = document.getElementById(`desc-${topicId}`);
+            descElement.innerHTML = description;
+            
+            // Update scores
+            if (previousLevel !== null) {
+                categoryScores[category].total -= previousLevel;
+            }
+            categoryScores[category].total += level;
+            
+            updateDashboard();
+        }
+
+        function updateDashboard() {
+            let totalScore = 0;
+            let totalTopics = 0;
+            
+            Object.keys(categoryScores).forEach(category => {
+                totalScore += categoryScores[category].total;
+                totalTopics += categoryScores[category].count;
+            });
+            
+            const averageScore = totalTopics > 0 ? (totalScore / totalTopics).toFixed(2) : 0;
+            const completedTopics = Object.values(assessmentState).filter(v => v !== null).length;
+            const completionPercentage = ((completedTopics / totalTopics) * 100).toFixed(0);
+            
+            document.getElementById('overallScore').textContent = averageScore;
+            
+            let levelName = 'Not Started';
+            if (averageScore >= 3.5) levelName = '⭐⭐⭐⭐ Leading';
+            else if (averageScore >= 2.5) levelName = '⭐⭐⭐ Mastering';
+            else if (averageScore >= 1.5) levelName = '⭐⭐ Growing';
+            else if (averageScore > 0) levelName = '⭐ Starting';
+            
+            document.getElementById('overallLevel').innerHTML = `${levelName}<br><span class="completion-badge">${completionPercentage}% Complete</span>`;
+            
+            // Update category stats
+            const statsContainer = document.getElementById('categoryStats');
+            statsContainer.innerHTML = '';
+            
+            Object.keys(categoryScores).forEach(category => {
+                const score = categoryScores[category];
+                const avgCategoryScore = score.count > 0 ? (score.total / score.count) : 0;
+                const percentage = (avgCategoryScore / 4) * 100;
+                
+                const statItem = document.createElement('div');
+                statItem.className = 'stat-item';
+                statItem.innerHTML = `
+                    <div class="stat-header">
+                        <span class="stat-name">${category}</span>
+                        <span class="stat-value">${avgCategoryScore.toFixed(2)} / 4.0</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${percentage}%"></div>
+                    </div>
+                `;
+                statsContainer.appendChild(statItem);
+            });
+        }
+
+        async function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const margin = 15;
+            let yPosition = margin;
+
+            // Add header with logo
+            pdf.setFillColor(26, 35, 50);
+            pdf.rect(0, 0, pageWidth, 40, 'F');
+            
+            pdf.setTextColor(255, 255, 255);
+            pdf.setFontSize(28);
+            pdf.text('STRIDE', margin, 20);
+            
+            pdf.setFontSize(12);
+            pdf.text('STRIDE Report', margin, 30);
+            
+            // Add date
+            const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            pdf.setFontSize(10);
+            pdf.text(today, pageWidth - margin - 40, 30);
+
+            yPosition = 50;
+
+            // Overall Score Section
+            pdf.setFillColor(26, 35, 50);
+            pdf.roundedRect(margin, yPosition, pageWidth - 2*margin, 35, 3, 3, 'F');
+            
+            pdf.setTextColor(255, 255, 255);
+            pdf.setFontSize(12);
+            pdf.text('OVERALL MATURITY SCORE', pageWidth/2, yPosition + 10, { align: 'center' });
+            
+            const overallScore = document.getElementById('overallScore').textContent;
+            pdf.setFontSize(36);
+            pdf.setTextColor(201, 169, 97);
+            pdf.text(overallScore, pageWidth/2, yPosition + 25, { align: 'center' });
+            
+            yPosition += 45;
+
+            // Category Scores
+            pdf.setFontSize(16);
+            pdf.setTextColor(26, 35, 50);
+            pdf.text('Category Performance', margin, yPosition);
+            yPosition += 10;
+
+            Object.keys(categoryScores).forEach(category => {
+                if (yPosition > pageHeight - 30) {
+                    pdf.addPage();
+                    yPosition = margin;
+                }
+
+                const score = categoryScores[category];
+                const avgScore = score.count > 0 ? (score.total / score.count).toFixed(2) : '0.00';
+                const percentage = score.count > 0 ? (score.total / score.count / 4 * 100) : 0;
+
+                pdf.setFontSize(11);
+                pdf.setTextColor(26, 35, 50);
+                pdf.text(category, margin, yPosition);
+                
+                pdf.setFontSize(10);
+                pdf.setTextColor(201, 169, 97);
+                pdf.text(`${avgScore} / 4.0`, pageWidth - margin - 20, yPosition);
+
+                yPosition += 5;
+
+                // Progress bar
+                pdf.setFillColor(232, 232, 232);
+                pdf.roundedRect(margin, yPosition, pageWidth - 2*margin, 6, 2, 2, 'F');
+                
+                pdf.setFillColor(201, 169, 97);
+                const barWidth = (pageWidth - 2*margin) * (percentage / 100);
+                if (barWidth > 0) {
+                    pdf.roundedRect(margin, yPosition, barWidth, 6, 2, 2, 'F');
+                }
+
+                yPosition += 12;
+            });
+
+            // Assessment Details
+            yPosition += 10;
+            if (yPosition > pageHeight - 40) {
+                pdf.addPage();
+                yPosition = margin;
+            }
+
+            pdf.setFontSize(16);
+            pdf.setTextColor(26, 35, 50);
+            pdf.text('Detailed Assessment', margin, yPosition);
+            yPosition += 10;
+
+            Object.keys(assessmentData).forEach(category => {
+                if (yPosition > pageHeight - 30) {
+                    pdf.addPage();
+                    yPosition = margin;
+                }
+
+                // Category header
+                pdf.setFillColor(26, 35, 50);
+                pdf.roundedRect(margin, yPosition, pageWidth - 2*margin, 10, 2, 2, 'F');
+                pdf.setTextColor(255, 255, 255);
+                pdf.setFontSize(12);
+                pdf.text(category, margin + 5, yPosition + 7);
+                yPosition += 15;
+
+                assessmentData[category].forEach((topic, topicIndex) => {
+                    const topicId = `${category}-${topicIndex}`;
+                    const selectedLevel = assessmentState[topicId];
+
+                    if (yPosition > pageHeight - 30) {
+                        pdf.addPage();
+                        yPosition = margin;
+                    }
+
+                    pdf.setFontSize(10);
+                    pdf.setTextColor(26, 35, 50);
+                    pdf.setFont(undefined, 'bold');
+                    pdf.text(`• ${topic.name}`, margin + 5, yPosition);
+                    pdf.setFont(undefined, 'normal');
+                    
+                    if (selectedLevel !== null) {
+                        const levelNames = ['Starting ⭐', 'Growing ⭐⭐', 'Mastering ⭐⭐⭐', 'Leading ⭐⭐⭐⭐'];
+                        pdf.setTextColor(201, 169, 97);
+                        pdf.text(levelNames[selectedLevel - 1], pageWidth - margin - 40, yPosition);
+                    } else {
+                        pdf.setTextColor(150, 150, 150);
+                        pdf.text('Not assessed', pageWidth - margin - 40, yPosition);
+                    }
+
+                    yPosition += 7;
+                });
+
+                yPosition += 5;
+            });
+
+            // Save PDF
+            const timestamp = new Date().toISOString().split('T')[0];
+            pdf.save(`STRIDE_Assessment_Report_${timestamp}.pdf`);
+        }
+
+        // Initialize on page load
+        window.onload = initializeAssessment;
+    </script>
+</body>
+</html>
