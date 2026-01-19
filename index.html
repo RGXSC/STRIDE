@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STRIDE - Self Asssement Tool for Readiness, Insight, Development & Excellence </title>
+    <title> Asssement Tool  </title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
@@ -559,10 +559,10 @@
         <header>
             <div class="header-content">
                 <div class="logo-section">
-                <img src="STRIDE_logo.png" alt="STRIDE Logo" class="logo" id="strideLogo">
+             <!--   <img src="STRIDE_logo.png" alt="STRIDE Logo" class="logo" id="strideLogo"> -->
                     <div class="header-text">
-                        <h1>STRIDE</h1>
-                        <p>Self Asssement Tool for Readiness, Insight, Development & Excellence</p>
+                        <h1>ASSESSMENT TOOL </h1>
+                        <p> Asssement Tool</p>
                     </div>
                 </div>
                 <button class="export-btn" onclick="exportToPDF()">
@@ -1089,10 +1089,10 @@ const assessmentData = {
             
             pdf.setTextColor(255, 255, 255);
             pdf.setFontSize(28);
-            pdf.text('STRIDE', margin, 20);
+            pdf.text('ASSESSMENT TOOL', margin, 20);
             
             pdf.setFontSize(12);
-            pdf.text('STRIDE Report', margin, 30);
+            pdf.text('Report', margin, 30);
             
             // Add date
             const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -1213,7 +1213,7 @@ const assessmentData = {
 
             // Save PDF
             const timestamp = new Date().toISOString().split('T')[0];
-            pdf.save(`STRIDE_Assessment_Report_${timestamp}.pdf`);
+            pdf.save(`Assessment_Report_${timestamp}.pdf`);
         }
 
         // Initialize on page load
@@ -1221,4 +1221,5 @@ const assessmentData = {
     </script>
 </body>
 </html>
+
 
