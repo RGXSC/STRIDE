@@ -1418,27 +1418,30 @@ const assessmentData = {
             yPosition += 8;
 
             const levels = [
-                { stars: '', color: [149, 165, 166], label: 'N/A - Not Applicable' },
-                { stars: '★', color: [231, 76, 60], label: 'Starting - Initial practices in place' },
-                { stars: '★★', color: [243, 156, 18], label: 'Growing - Structured and documented' },
-                { stars: '★★★', color: [52, 152, 219], label: 'Mastering - Optimized and measured' },
-                { stars: '★★★★', color: [201, 169, 97], label: 'Leading - Best-in-class performance' }
+                { level: 'N/A', color: [149, 165, 166], label: 'Not Applicable' },
+                { level: '1', color: [231, 76, 60], label: 'Starting' },
+                { level: '2', color: [243, 156, 18], label: 'Growing' },
+                { level: '3', color: [52, 152, 219], label: 'Mastering' },
+                { level: '4', color: [201, 169, 97], label: 'Leading' }
             ];
-
-            levels.forEach(level => {
-                pdf.setFillColor(level.color[0], level.color[1], level.color[2]);
+            
+            levels.forEach(levelItem => {
+                pdf.setFillColor(levelItem.color[0], levelItem.color[1], levelItem.color[2]);
                 pdf.circle(margin + 3, yPosition + 1, 2, 'F');
                 
-                pdf.setTextColor(level.color[0], level.color[1], level.color[2]);
+                pdf.setTextColor(levelItem.color[0], levelItem.color[1], levelItem.color[2]);
                 pdf.setFontSize(10);
-                pdf.text(level.stars, margin + 10, yPosition + 3);
+                pdf.setFont(undefined, 'bold');
+                pdf.text(levelItem.level, margin + 10, yPosition + 3);
+                pdf.setFont(undefined, 'normal');
                 
                 pdf.setTextColor(60, 60, 60);
                 pdf.setFontSize(9);
-                pdf.text(level.label, margin + 25, yPosition + 3);
+                pdf.text(levelItem.label, margin + 20, yPosition + 3);
                 
                 yPosition += 8;
             });
+
 
             // Add page footer
             addPageFooter();
@@ -1593,6 +1596,7 @@ const assessmentData = {
     </script>
 </body>
 </html>
+
 
 
 
